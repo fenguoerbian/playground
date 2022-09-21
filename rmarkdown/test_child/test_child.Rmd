@@ -1,0 +1,79 @@
+---
+title: "Untitled"
+author: "Chao Cheng"
+date: "`r Sys.Date()`"
+documentclass: ctexart
+output:
+  rticles::ctex: 
+    toc: yes
+    keep_tex: yes
+    latex_engine: xelatex
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::knit_hooks$set(purl = knitr::hook_purl)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r all_lab1}
+knitr::all_labels()
+ls()
+```
+
+```{r load_child, echo = TRUE, results='hide'}
+child_res <- lapply(c("gen_str_output.Rmd", "form_output.Rmd"),
+                    knitr::knit_child, 
+                    quiet = TRUE, 
+                    envir = environment())
+```
+
+```{r all_lab2}
+knitr::all_labels()
+ls()
+```
+
+```{r, eval = TRUE}
+Gen_Str_Output(1 : 10, digit = 2)
+```
+
+# appendix
+
+## Details of predefined functions
+
+```{r show_child, echo = FALSE, results='asis'}
+cat(unlist(child_res), sep = "\n")
+```
+
+
+```{r, all_lab3}
+knitr::all_labels()
+```
+
+```{r, test_ref2, ref.label="fun_gen_str_output"}
+```
+
+```{r, all_lab4}
+knitr::all_labels()
+```

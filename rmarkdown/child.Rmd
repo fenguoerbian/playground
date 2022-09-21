@@ -1,0 +1,42 @@
+---
+title: "child"
+author: "Chao Cheng"
+date: "2022-08-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+content <- c(
+    "# 本周工作总结", "", 
+    "## 人员管理 ", "", 
+    "&emsp;&emsp;1.办理2名员工入职手续，办理1人离职手续。 ", "", 
+    "## 绩效管理", "", 
+    "&emsp;&emsp;1.核对了相关部门报送的考核数据。", "", 
+    "# 下周工作计划", "", 
+    "## 绩效管理", "", 
+    "&emsp;&emsp;1.做好二季度考核结果的绩效反馈。", "", 
+    "## 培训管理", "", 
+    "&emsp;&emsp;1.发布常态化七期考试的通报。" 
+)
+```
+
+```{r, echo=FALSE}
+res <- knitr::knit_child(text = content, 
+                         envir = environment(), 
+                         quiet = TRUE)
+cat(unlist(res), sep = '\n')
+```
+
+`r paste(content, collapse = "\n\n")`
+
+```{r, echo=FALSE, results='asis'}
+res <- knitr::knit_child(text = content, 
+                         envir = environment(), 
+                         quiet = TRUE)
+cat(unlist(res), sep = '\n')
+```

@@ -1,0 +1,59 @@
+------
+
+`Form_Output` 将总结好的结果转换为TFL中要求的按列呈现的形式
+
+- `df_long`: 待输出的数据，可参考`Summary_Perct`的结果，主要需包含
+
+- `by_var_name`：提供`pivot_wider`时的`names_from`。其内容一般是剂量组（字符串或factor），在最终结果表中是列名（A组、B组……）
+
+- `col_name`: 该列保存计数结果
+
+- `{col_name}_pct_str`: 格式处理过后的百分比数值，（字符串格式）。
+
+- `group_var_name`: 若非空，说明`df_long`中数据是按照`(by_var_name, group_var_name)`这样的双层结构进行计数的。一般该列内容是各分组结果，如原因1，原因2，……
+
+- `by_var_name`, `col_name`, `{col_name}_pct_str`：已在之前解释
+
+```{r, fun_form_output}
+Form_Output <- function(df_long, 
+                        by_var_name = "arm_fct", 
+                        col_name = "trt_num", 
+                        group_var_name = NULL, 
+                        out_1st_name = NULL, 
+                        out_1st_val = NULL){
+    res <- df_long %>%
+        mutate(out_str = str_c(.data[[col_name]], 
+                               "(", 
+                               .data[[glue::glue("{var_name}_pct_str", 
+                                                 var_name = col_name)]], 
+                               "%)"))
+    if(is.null(group_var_name)){
+        res <- res %>%
+            select(all_of(by_var_name), out_str) %>%
+            pivot_wider(names_from = all_of(by_var_name), 
+                        values_from = out_str) 
+        if(!is.null(out_1st_name)){
+            res <- res %>%
+                mutate("{out_1st_name}" := out_1st_val, .before = 1)
+        }else{
+            res <- res %>%
+                mutate("{col_name}" := " ", .before = 1)
+        }
+    }else{
+        grp_lvls <- levels(df_long %>% pull(all_of(group_var_name)))
+        
+        res <- res %>%
+            pivot_wider(id_cols = .data[[group_var_name]], 
+                        names_from = all_of(by_var_name), 
+                        values_from = out_str) %>%
+            arrange(factor(.data[[group_var_name]], levels = grp_lvls)) %>%    # 确保输出行的顺序与原始`group_var_name`的level一致
+            mutate("{group_var_name}" := as.character(.data[[group_var_name]]))
+        if(!is.null(out_1st_name)){
+            res <- res %>%
+                rename("{out_1st_name}" := all_of(group_var_name))
+        }
+    }
+    
+    return(res)
+}
+```

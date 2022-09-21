@@ -1,0 +1,33 @@
+------
+
+`Gen_Str_Output` 用来产生数值结果的字符串:
+
+- `in_num`: 数值型向量
+
+- `digit`：输出结果的小数点位数
+
+- `pct`：输入的数值是否是百分数，默认为`TRUE`。当输入数值代表百分数时，`0`和`100`
+将会直接输出，而不添加小数点和小数位数。
+
+```{r, fun_gen_str_output}
+Gen_Str_Output_Atom <- function(in_num, digit = 1, pct = TRUE){
+    # Generate string output from numeric input
+    digit <- min(digit, 4)
+    
+    if(pct){ # rule for `percentage` output
+        if((in_num == 0) | (in_num == 100)){
+            res <- as.character(in_num)
+        }else{
+            res <- sprintf(paste0("%.", digit, "f"), in_num)
+        }
+    }else{ # rule for other output
+        res <- sprintf(paste0("%.", digit, "f"), in_num)
+    }
+    return(res)
+}
+
+Gen_Str_Output <- function(in_num, digit = 1, pct = TRUE){
+    res <- mapply(Gen_Str_Output_Atom, in_num = in_num, digit = digit, pct = pct)
+    return(res)
+}
+```
